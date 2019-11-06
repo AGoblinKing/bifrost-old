@@ -11,9 +11,10 @@
 ## purpose
 Provides a headless executable for running Weave programs like EarthRock. Useful for servers and development.
 
-## road map
+## log
  - [X] Static HTTP server
  - [X] Single Page Application Support
+ - [X] Prevent directories from showing up via FileServer
  - [ ] Event Source Channel
  - [ ] POST Channel
  - [ ] Host off //bifrost.earthrock.run
