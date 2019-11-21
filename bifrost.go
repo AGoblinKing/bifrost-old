@@ -11,7 +11,7 @@ import (
 )
 
 // Version of Bifrost
-const Version = "0.0.2"
+const Version = "0.0.3"
 
 var port int64
 
@@ -25,7 +25,7 @@ func serveHTTP() {
 
 	r := mux.NewRouter()
 
-	r.Headers("Cache-Control", "max-age=0").
+	r.Headers("Cache-Control", "no-cache").
 		Handler(spa)
 
 	srv := &http.Server{
