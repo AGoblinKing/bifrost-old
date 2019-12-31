@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type spaHandler struct {
@@ -14,6 +15,7 @@ type spaHandler struct {
 func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// get the absolute path to prevent directory traversal
 	path, err := filepath.Abs(r.URL.Path)
+
 	if err != nil {
 		// if we failed to get the absolute path respond with a 400 bad request
 		// and stop
@@ -21,13 +23,14 @@ func (h spaHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	path = strings.Replace(path, filepath.VolumeName(path), ".", 1)
+
 	// prepend the path with the path to the static directory
 	path = filepath.Join(h.staticPath, path)
 
 	// check whether a file exists at the given path
-	stat, err := os.Stat(path)
-
-	if os.IsNotExist(err) || (err == nil && stat.Mode().IsDir()) {
+	_, err = os.Stat(path)
+	if os.IsNotExist(err) {
 		// file does not exist, serve index.html
 		http.ServeFile(w, r, filepath.Join(h.staticPath, h.indexPath))
 		return

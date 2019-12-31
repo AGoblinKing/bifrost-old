@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 )
 
 // Version of Bifrost
-const Version = "0.0.3"
+const Version = "0.0.4"
 
 var port int64
 
@@ -23,13 +24,17 @@ func serveHTTP() {
 		indexPath:  "index.html",
 	}
 
-	r := mux.NewRouter()
+	router := mux.NewRouter()
 
-	r.Headers("Cache-Control", "no-cache").
-		Handler(spa)
+	router.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
+		// an example API handler
+		json.NewEncoder(w).Encode(map[string]bool{"ok": true})
+	})
+
+	router.PathPrefix("/").Handler(spa)
 
 	srv := &http.Server{
-		Handler:      r,
+		Handler:      router,
 		Addr:         ":" + portStr,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
